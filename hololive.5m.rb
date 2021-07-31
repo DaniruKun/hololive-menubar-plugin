@@ -46,7 +46,7 @@ IMG_BASE64 = 'iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAJ
 class Hololive
   def initialize
     @videos_live = holofans_api('https://api.holotools.app/v1/videos?limit=20&status=live&with_comments=0')
-    @videos_upcoming = nil
+    @videos_upcoming = holofans_api('https://api.holotools.app/v1/videos?limit=30&status=upcoming')
   end
 
   def holofans_api(resource)
@@ -73,13 +73,31 @@ class Hololive
     else
       puts 'No one streaming'
     end
+
+    puts '---'
+    print_upcoming
   end
 
   private
 
+  def print_upcoming
+    puts 'Upcoming'
+
+    if @videos_upcoming.length.positive?
+      @videos_upcoming.map { |entry| "-- #{video_entry_str(entry)}" }
+                      .reject { |entry| entry.match?(/free/i) }
+                      .each { |e| puts e }
+    else
+      puts 'No upcoming streams'
+    end
+    puts '---'
+  end
+
   def video_entry_str(video)
     fanmark = channel_emoji(video['channel']['yt_channel_id'])
-    "#{fanmark} #{video['title']} |" \
+    title = video['title'].gsub('|', '')
+
+    "#{fanmark} #{title} |" \
     " href=https://youtu.be/#{video['yt_video_key']}"
   end
 
