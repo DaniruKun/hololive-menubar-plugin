@@ -11,8 +11,7 @@
 #  <xbar.dependencies>ruby</xbar.dependencies>
 #  <xbar.abouturl>http://url-to-about.com/</xbar.abouturl>
 #
-#  <xbar.var>number(VAR_COUNTER=1): A counter.</xbar.var>
-#  <xbar.var>boolean(VAR_VERBOSE=true): Whether to be verbose or not.</xbar.var>
+#  <xbar.var>boolean(VAR_VERBOSE=false): Whether to be verbose or not.</xbar.var>
 #  <xbar.var>select(VAR_STYLE="normal"): Which style to use. [small, normal, big]</xbar.var>
 
 
@@ -41,6 +40,7 @@ require 'openssl'
 Encoding.default_external = Encoding::UTF_8
 Encoding.default_internal = Encoding::UTF_8
 
+# Plugin icon as base64 string
 IMG_BASE64 = 'iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAJZlWElmTU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgExAAIAAAARAAAAWodpAAQAAAABAAAAbAAAAAAAAACQAAAAAQAAAJAAAAABd3d3Lmlua3NjYXBlLm9yZwAAAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABigAwAEAAAAAQAAABgAAAAAXjAL1AAAAAlwSFlzAAAWJQAAFiUBSVIk8AAAActpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDYuMC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iCiAgICAgICAgICAgIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgICAgIDx4bXA6Q3JlYXRvclRvb2w+d3d3Lmlua3NjYXBlLm9yZzwveG1wOkNyZWF0b3JUb29sPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4K56DsKAAAAVlJREFUSA21ljtOxDAQhsNLVAiEOABUHAEKxCEoKLgGQlyAlpaKC9Cj5VHTUCJOgUAUdIjn9y/50ewGr2KcjPSt7SSePzMeO1tVP7ZMcwYvcA07MAuyGZga9gp+jpj7BR91q/4AtsE2TUdk2xwzzkFO30Ai7/X4lfYUVsGm57MiWmLCDUjAji2mVjzDAehZmQRaR7PIw38JyPEnxLTdMd4DW6u0TRJwBBJS+jy+or9pFVoVRDKiVIrsLLYxheqfwBrYVHENyxGQ2HjaHrh2CAvB80g0uQKpiO4R2A0iv9GUCEgslrXGF7BeCw0jKRVwRBJS+jR+hA1Ir7xuZpreVvtDm3MF9qFTAflr2MhqN+7mXXB65pn2BMea3oWAy9YpusTvFtzaf8kix43XWZn6jV09nW60+Matj4reD7tJAuPp+NdxnVrkeDwXfXB6/2RSrlWvH30J9Pa35RsDtfNl2vuLzQAAAABJRU5ErkJggg=='
 
 def fetch_airing
@@ -143,7 +143,6 @@ puts '---'
 videos = Array(fetch_airing)
 
 # Output airing streams
-puts 'Airing'
 puts "Live channels: #{videos.length}"
 puts '---'
 
