@@ -1,6 +1,6 @@
 # Hololive xbar plugin
 
-This is a plugin for the excellent xbar app that allows you to view information about Hololive live streams and channels, right in your macOS menu bar.
+This is a plugin for the excellent [xbar app](https://xbarapp.com) that allows you to view information about Hololive live streams and channels, right in your macOS menu bar.
 
 ## Screenshots
 
