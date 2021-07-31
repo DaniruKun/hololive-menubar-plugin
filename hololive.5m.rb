@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 # coding: utf-8
+# frozen_string_literal: true
 
 #
 #  <xbar.title>Hololive Xbar Plugin</xbar.title>
@@ -9,13 +10,28 @@
 #  <xbar.desc>Plugin to quickly see live and upcoming Hololive streams.</xbar.desc>
 #  <xbar.dependencies>ruby</xbar.dependencies>
 #  <xbar.abouturl>http://url-to-about.com/</xbar.abouturl>
-
-# Variables become preferences in the app:
 #
-#  <xbar.var>string(VAR_NAME="Daniils Petrovs"): Your name.</xbar.var>
 #  <xbar.var>number(VAR_COUNTER=1): A counter.</xbar.var>
 #  <xbar.var>boolean(VAR_VERBOSE=true): Whether to be verbose or not.</xbar.var>
 #  <xbar.var>select(VAR_STYLE="normal"): Which style to use. [small, normal, big]</xbar.var>
+
+
+    # Hololive xbar plugin.
+    # Copyright (C) 2021 Daniils Petrovs
+    # https://github.com/DaniruKun
+
+    # This program is free software: you can redistribute it and/or modify
+    # it under the terms of the GNU General Public License as published by
+    # the Free Software Foundation, either version 3 of the License, or
+    # (at your option) any later version.
+
+    # This program is distributed in the hope that it will be useful,
+    # but WITHOUT ANY WARRANTY; without even the implied warranty of
+    # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    # GNU General Public License for more details.
+
+    # You should have received a copy of the GNU General Public License
+    # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 require 'json'
 require 'uri'
@@ -25,8 +41,10 @@ require 'openssl'
 Encoding.default_external = Encoding::UTF_8
 Encoding.default_internal = Encoding::UTF_8
 
+IMG_BASE64 = 'iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAJZlWElmTU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgExAAIAAAARAAAAWodpAAQAAAABAAAAbAAAAAAAAACQAAAAAQAAAJAAAAABd3d3Lmlua3NjYXBlLm9yZwAAAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABigAwAEAAAAAQAAABgAAAAAXjAL1AAAAAlwSFlzAAAWJQAAFiUBSVIk8AAAActpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDYuMC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iCiAgICAgICAgICAgIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgICAgIDx4bXA6Q3JlYXRvclRvb2w+d3d3Lmlua3NjYXBlLm9yZzwveG1wOkNyZWF0b3JUb29sPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4K56DsKAAAAVlJREFUSA21ljtOxDAQhsNLVAiEOABUHAEKxCEoKLgGQlyAlpaKC9Cj5VHTUCJOgUAUdIjn9y/50ewGr2KcjPSt7SSePzMeO1tVP7ZMcwYvcA07MAuyGZga9gp+jpj7BR91q/4AtsE2TUdk2xwzzkFO30Ai7/X4lfYUVsGm57MiWmLCDUjAji2mVjzDAehZmQRaR7PIw38JyPEnxLTdMd4DW6u0TRJwBBJS+jy+or9pFVoVRDKiVIrsLLYxheqfwBrYVHENyxGQ2HjaHrh2CAvB80g0uQKpiO4R2A0iv9GUCEgslrXGF7BeCw0jKRVwRBJS+jR+hA1Ir7xuZpreVvtDm3MF9qFTAflr2MhqN+7mXXB65pn2BMea3oWAy9YpusTvFtzaf8kix43XWZn6jV09nW60+Matj4reD7tJAuPp+NdxnVrkeDwXfXB6/2RSrlWvH30J9Pa35RsDtfNl2vuLzQAAAABJRU5ErkJggg=='
+
 def fetch_airing
-  url = URI('https://api.holotools.app/v1/videos?limit=10&status=live&with_comments=0')
+  url = URI('https://api.holotools.app/v1/videos?limit=20&status=live&with_comments=0')
   http = Net::HTTP.new(url.host, url.port)
   http.use_ssl = true
   http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -119,14 +137,15 @@ def channel_emoji(yt_channel_id)
   channel_emoji.fetch(yt_channel_id, '')
 end
 
-puts 'Hololive'
-puts '---'
-
-# Render video titles in a basic submenu
-puts 'Airing | color=white'
+puts "| size=14 color=#BFBFBF trim=false templateImage=#{IMG_BASE64}"
 puts '---'
 
 videos = Array(fetch_airing)
+
+# Output airing streams
+puts 'Airing'
+puts "Live channels: #{videos.length}"
+puts '---'
 
 if videos.length.positive?
   videos.each { |video| puts video_entry_str video }
