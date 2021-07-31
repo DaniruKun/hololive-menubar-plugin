@@ -2,18 +2,16 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-#
-#  <xbar.title>Hololive Xbar Plugin</xbar.title>
+#  <xbar.title>Hololive</xbar.title>
 #  <xbar.version>v1.0</xbar.version>
 #  <xbar.author>Daniils Petrovs</xbar.author>
 #  <xbar.author.github>danirukun</xbar.author.github>
-#  <xbar.desc>Plugin to quickly see live and upcoming Hololive streams.</xbar.desc>
+#  <xbar.desc>Display live and upcoming Hololive streams in your menu bar!</xbar.desc>
+#  <xbar.image>https://i.imgur.com/LR2WhDw.png</xbar.image>
 #  <xbar.dependencies>ruby</xbar.dependencies>
-#  <xbar.abouturl>http://url-to-about.com/</xbar.abouturl>
-#
+#  <xbar.abouturl>https://github.com/DaniruKun/hololive-xbar-plugin</xbar.abouturl>
 #  <xbar.var>boolean(VAR_VERBOSE=false): Whether to be verbose or not.</xbar.var>
 #  <xbar.var>select(VAR_STYLE="normal"): Which style to use. [small, normal, big]</xbar.var>
-
 
     # Hololive xbar plugin.
     # Copyright (C) 2021 Daniils Petrovs
