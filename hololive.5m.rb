@@ -47,6 +47,7 @@ UTC_NOW = Time.now.utc
 SHOW_TIME_DIFF = ENV['VAR_SHOW_TIME'] || 'true'
 MAX_TITLE_LEN = 30
 ENTRY_WIDTH = 50
+HOLODEX_URL = 'https://holodex.net'
 
 class Video
   def initialize(title, yt_video_key, channel_id, scheduled_start, live_start)
@@ -118,6 +119,7 @@ class Hololive
     puts '---'
     print_live
     print_upcoming
+    puts "Open in Holodex | href=#{HOLODEX_URL}"
   end
 
   def self.channel_emoji(yt_channel_id)
