@@ -93,11 +93,11 @@ end
 #   Class encapsulating main plugin logic related to API calls and printing to stdout.
 class Hololive
   def initialize
-    lives = holofans_api('https://api.holotools.app/v1/videos?limit=20&status=live&with_comments=0')
+    lives = holofans_api('https://api.holotools.app/v1/videos?limit=20&order=asc&sort=live_start&status=live&with_comments=0')
     @videos_live = lives.map do |v|
       Video.new(v['title'], v['yt_video_key'], v['channel']['yt_channel_id'], v['live_schedule'], v['live_start'])
     end
-    upcoming = holofans_api('https://api.holotools.app/v1/videos?limit=30&status=upcoming')
+    upcoming = holofans_api('https://api.holotools.app/v1/videos?limit=30&status=upcoming&order=asc&sort=live_schedule')
     @videos_upcoming = upcoming.map do |v|
       Video.new(v['title'], v['yt_video_key'], v['channel']['yt_channel_id'], v['live_schedule'], v['live_start'])
     end
