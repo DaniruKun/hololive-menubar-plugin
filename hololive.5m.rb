@@ -7,7 +7,7 @@
 #  <xbar.author>Daniils Petrovs</xbar.author>
 #  <xbar.author.github>danirukun</xbar.author.github>
 #  <xbar.desc>Display live and upcoming Hololive streams in your menu bar!</xbar.desc>
-#  <xbar.image>https://imgur.com/a/nsP0qgI</xbar.image>
+#  <xbar.image>https://i.imgur.com/BEOzDBM.png</xbar.image>
 #  <xbar.dependencies>ruby</xbar.dependencies>
 #  <xbar.abouturl>https://github.com/DaniruKun/hololive-xbar-plugin</xbar.abouturl>
 #  <xbar.var>boolean(VAR_VERBOSE=false): Whether to be verbose or not.</xbar.var>

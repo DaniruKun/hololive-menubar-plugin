@@ -4,7 +4,7 @@ This is a plugin for the excellent [xbar app](https://xbarapp.com) that allows y
 
 ## Screenshots
 
-![Plugin Screenshot](hololive-xbar-plugin.png)
+![Plugin Screenshot](https://i.imgur.com/BEOzDBM.png)
 
 ## Usage/Examples
 
