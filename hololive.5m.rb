@@ -11,6 +11,7 @@
 #  <xbar.dependencies>ruby</xbar.dependencies>
 #  <xbar.abouturl>https://github.com/DaniruKun/hololive-xbar-plugin</xbar.abouturl>
 #  <xbar.var>boolean(VAR_VERBOSE=false): Whether to be verbose or not.</xbar.var>
+#  <xbar.var>boolean(VAR_SHOW_TIME=true): Whether to show time to upcoming streams or time since start.</xbar.var>
 #  <xbar.var>select(VAR_STYLE="normal"): Which style to use. [small, normal, big]</xbar.var>
 
 # Hololive xbar plugin.
@@ -34,6 +35,7 @@ require 'json'
 require 'uri'
 require 'net/http'
 require 'openssl'
+require 'time'
 
 Encoding.default_external = Encoding::UTF_8
 Encoding.default_internal = Encoding::UTF_8
@@ -41,12 +43,64 @@ Encoding.default_internal = Encoding::UTF_8
 # Plugin icon as base64 string
 IMG_BASE64 = 'iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAJZlWElmTU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgExAAIAAAARAAAAWodpAAQAAAABAAAAbAAAAAAAAACQAAAAAQAAAJAAAAABd3d3Lmlua3NjYXBlLm9yZwAAAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABigAwAEAAAAAQAAABgAAAAAXjAL1AAAAAlwSFlzAAAWJQAAFiUBSVIk8AAAActpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDYuMC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iCiAgICAgICAgICAgIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgICAgIDx4bXA6Q3JlYXRvclRvb2w+d3d3Lmlua3NjYXBlLm9yZzwveG1wOkNyZWF0b3JUb29sPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4K56DsKAAAAVlJREFUSA21ljtOxDAQhsNLVAiEOABUHAEKxCEoKLgGQlyAlpaKC9Cj5VHTUCJOgUAUdIjn9y/50ewGr2KcjPSt7SSePzMeO1tVP7ZMcwYvcA07MAuyGZga9gp+jpj7BR91q/4AtsE2TUdk2xwzzkFO30Ai7/X4lfYUVsGm57MiWmLCDUjAji2mVjzDAehZmQRaR7PIw38JyPEnxLTdMd4DW6u0TRJwBBJS+jy+or9pFVoVRDKiVIrsLLYxheqfwBrYVHENyxGQ2HjaHrh2CAvB80g0uQKpiO4R2A0iv9GUCEgslrXGF7BeCw0jKRVwRBJS+jR+hA1Ir7xuZpreVvtDm3MF9qFTAflr2MhqN+7mXXB65pn2BMea3oWAy9YpusTvFtzaf8kix43XWZn6jV09nW60+Matj4reD7tJAuPp+NdxnVrkeDwXfXB6/2RSrlWvH30J9Pa35RsDtfNl2vuLzQAAAABJRU5ErkJggg=='
 
+UTC_NOW = Time.now.utc
+SHOW_TIME_DIFF = ENV['VAR_SHOW_TIME'] || 'true'
+MAX_TITLE_LEN = 30
+ENTRY_WIDTH = 50
+
+class Video
+  def initialize(title, yt_video_key, channel_id, scheduled_start, live_start)
+    @title = title.gsub('|', '')
+    @yt_video_key = yt_video_key
+    @channel_id = channel_id
+    @scheduled_start = scheduled_start
+    @live_start = live_start
+  end
+
+  def to_entry_str
+    fanmark = Hololive.channel_emoji @channel_id
+    formatted_title = @title.length > MAX_TITLE_LEN ? @title.slice(0..MAX_TITLE_LEN).concat('...') : @title
+
+    case SHOW_TIME_DIFF
+    when 'true'
+      "#{fanmark} #{formatted_title} #{formatted_time_diff} |" \
+      " href=https://youtu.be/#{@yt_video_key}"
+    when 'false'
+      "#{fanmark} #{formatted_title} |" \
+      " href=https://youtu.be/#{@yt_video_key}"
+    end
+  end
+
+  private
+
+  def formatted_time_diff
+    start_time = Time.parse(@live_start || @scheduled_start)
+    seconds_diff = (start_time - UTC_NOW).to_i.abs
+
+    hours = seconds_diff / 3600
+    seconds_diff -= hours * 3600
+    minutes = seconds_diff / 60
+
+    if hours.positive?
+      "[#{hours}h #{minutes}m]"
+    else
+      "[#{minutes}m]"
+    end
+  end
+end
+
 # rdoc
 #   Class encapsulating main plugin logic related to API calls and printing to stdout.
 class Hololive
   def initialize
-    @videos_live = holofans_api('https://api.holotools.app/v1/videos?limit=20&status=live&with_comments=0')
-    @videos_upcoming = holofans_api('https://api.holotools.app/v1/videos?limit=30&status=upcoming')
+    lives = holofans_api('https://api.holotools.app/v1/videos?limit=20&status=live&with_comments=0')
+    @videos_live = lives.map do |v|
+      Video.new(v['title'], v['yt_video_key'], v['channel']['yt_channel_id'], v['live_schedule'], v['live_start'])
+    end
+    upcoming = holofans_api('https://api.holotools.app/v1/videos?limit=30&status=upcoming')
+    @videos_upcoming = upcoming.map do |v|
+      Video.new(v['title'], v['yt_video_key'], v['channel']['yt_channel_id'], v['live_schedule'], v['live_start'])
+    end
   end
 
   def holofans_api(resource)
@@ -55,53 +109,18 @@ class Hololive
     http.use_ssl = true
     request = Net::HTTP::Get.new(url.request_uri)
     response = http.request(request)
-    JSON.parse(response.body)['videos']
+    Array(JSON.parse(response.body)['videos'])
   end
 
   def print_data
     # Print menu bar icon
     puts "| size=14 color=#BFBFBF trim=false templateImage=#{IMG_BASE64}"
     puts '---'
-
-    # Output airing streams
-    puts "Live channels: #{@videos_live.length}"
-    puts '---'
-
-    # Print live streams
-    if @videos_live.length.positive?
-      @videos_live.each { |video| puts video_entry_str(video) }
-    else
-      puts 'No one streaming'
-    end
-
-    puts '---'
+    print_live
     print_upcoming
   end
 
-  private
-
-  def print_upcoming
-    puts 'Upcoming'
-
-    if @videos_upcoming.length.positive?
-      @videos_upcoming.map { |entry| "-- #{video_entry_str(entry)}" }
-                      .reject { |entry| entry.match?(/free/i) }
-                      .each { |e| puts e }
-    else
-      puts 'No upcoming streams'
-    end
-    puts '---'
-  end
-
-  def video_entry_str(video)
-    fanmark = channel_emoji(video['channel']['yt_channel_id'])
-    title = video['title'].gsub('|', '')
-
-    "#{fanmark} #{title} |" \
-    " href=https://youtu.be/#{video['yt_video_key']}"
-  end
-
-  def channel_emoji(yt_channel_id)
+  def self.channel_emoji(yt_channel_id)
     channel_emoji = {
       # 0th Generation
       'UCp6993wxpyDPHUpavwDFqgg' => '🐻',
@@ -169,6 +188,33 @@ class Hololive
     }
 
     channel_emoji.fetch(yt_channel_id, '')
+  end
+
+  private
+
+  def print_live
+    puts "Live now: #{@videos_live&.length}"
+    puts '---'
+
+    if @videos_live&.length&.positive?
+      @videos_live.map(&:to_entry_str).each { |v| puts v }
+    else
+      puts 'No one streaming'
+    end
+    puts '---'
+  end
+
+  def print_upcoming
+    puts "Upcoming: #{@videos_upcoming&.length}"
+
+    if @videos_upcoming&.length&.positive?
+      @videos_upcoming.map { |v| "-- #{v.to_entry_str}" }
+                      .reject { |entry| entry.match?(/free/i) }
+                      .each { |e| puts e }
+    else
+      puts 'No upcoming streams'
+    end
+    puts '---'
   end
 end
 
