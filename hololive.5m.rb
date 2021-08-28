@@ -186,7 +186,11 @@ class Hololive
       'UCMwGHR0BTZuLsmjY_NT5Pwg' => '🐙',
       'UCoSrY_IQQVpmIRZ9Xf-y93g' => '🔱',
       'UCyl1z3jo3XHR1riLFKG5UAg' => '🔎',
-      'UC8rcEBzJSleTkf_-agPM20g' => '💎'
+      'UC8rcEBzJSleTkf_-agPM20g' => '💎',
+      'UCsUj0dszADCGbF3gNrQEuSQ' => '🪐',
+      'UC3n5uGu18FoCy23ggWWp8tA' => '🪶',
+      'UCmbs8T6MWqUHP1tIQvSgKrg' => '⏳',
+      'UCO_aKKYxn4tvrqPjcTzZ6EQ' => '🌿'
     }
 
     channel_emoji.fetch(yt_channel_id, '')
