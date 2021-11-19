@@ -216,7 +216,7 @@ class Hololive
 
     if @videos_upcoming&.length&.positive?
       @videos_upcoming.map { |v| "-- #{v.to_entry_str}" }
-                      .reject { |entry| entry.match?(/free/i) }
+                      .reject { |entry| entry.match?(/free|schedule/i) }
                       .each { |e| puts e }
     else
       puts 'No upcoming streams'
