@@ -191,7 +191,13 @@ class Hololive
       'UC3n5uGu18FoCy23ggWWp8tA' => '🪶',
       'UCmbs8T6MWqUHP1tIQvSgKrg' => '⏳',
       'UCO_aKKYxn4tvrqPjcTzZ6EQ' => '🌿',
-      'UCgmPnx-EEeOrZSg5Tiw7ZRQ' => '🎲'
+      'UCgmPnx-EEeOrZSg5Tiw7ZRQ' => '🎲',
+      # HoloX
+      'UCENwRMx5Yh42zWpzURebzTw' => '🛸💜',
+      'UCs9_O1tRPMQTHQ-N_L6FU2g' => '🥀',
+      'UC6eWCld0KwmyHFbAqK3V-Rw' => '🧪',
+      'UCIBY1ollUsauvVi4hW4cumw' => '🎣',
+      'UC_vMYWcDjmfdpH6r4TTn1MQ' => '🍃'
     }
 
     channel_emoji.fetch(yt_channel_id, '')

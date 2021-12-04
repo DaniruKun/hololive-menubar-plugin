@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
 
-echo "Copying plugin script to xbar plugin dir"
-cp hololive.5m.rb "$HOME/Library/Application Support/xbar/plugins/"
+# Replace with your own
+PLUGIN_DIR="$HOME/config/swiftbar/plugins/"
+
+echo "Copying plugin script to plugin dir..."
+cp hololive.5m.rb $PLUGIN_DIR
