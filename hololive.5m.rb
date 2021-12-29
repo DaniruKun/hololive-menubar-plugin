@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-# coding: utf-8
 # frozen_string_literal: true
 
 #  <xbar.title>Hololive</xbar.title>
@@ -48,6 +47,7 @@ SHOW_TIME_DIFF = ENV['VAR_SHOW_TIME'] || 'true'
 MAX_TITLE_LEN = 30
 ENTRY_WIDTH = 50
 HOLODEX_URL = 'https://holodex.net'
+ORGANIZATION = 'Hololive' # You can override this if you want another agency
 
 class Video
   def initialize(title, yt_video_key, channel_id, scheduled_start, live_start)
@@ -94,23 +94,27 @@ end
 #   Class encapsulating main plugin logic related to API calls and printing to stdout.
 class Hololive
   def initialize
-    lives = holofans_api('https://api.holotools.app/v1/videos?limit=20&order=asc&sort=live_start&status=live&with_comments=0')
+    lives = holodex_api('live',
+                        [%w[limit 20], %w[order asc], %w[sort start_scheduled], %w[status live], ['org', ORGANIZATION]])
     @videos_live = lives.map do |v|
-      Video.new(v['title'], v['yt_video_key'], v['channel']['yt_channel_id'], v['live_schedule'], v['live_start'])
+      Video.new(v['title'], v['id'], v['channel']['id'], v['start_scheduled'], v['start_actual'])
     end
-    upcoming = holofans_api('https://api.holotools.app/v1/videos?limit=30&status=upcoming&order=asc&sort=live_schedule')
+    upcoming = holodex_api('live',
+                           [%w[limit 30], %w[order asc], %w[sort start_scheduled], %w[status upcoming],
+                            ['org', ORGANIZATION]])
     @videos_upcoming = upcoming.map do |v|
-      Video.new(v['title'], v['yt_video_key'], v['channel']['yt_channel_id'], v['live_schedule'], v['live_start'])
+      Video.new(v['title'], v['id'], v['channel']['id'], v['start_scheduled'], v['start_actual'])
     end
   end
 
-  def holofans_api(resource)
-    url = URI.parse(resource)
-    http = Net::HTTP.new(url.host, url.port)
+  def holodex_api(resource, params)
+    uri = URI.join HOLODEX_URL, '/api/v2/', resource
+    uri.query = URI.encode_www_form params
+    http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
-    request = Net::HTTP::Get.new(url.request_uri)
+    request = Net::HTTP::Get.new(uri.request_uri)
     response = http.request(request)
-    Array(JSON.parse(response.body)['videos'])
+    Array(JSON.parse(response.body))
   end
 
   def print_data
