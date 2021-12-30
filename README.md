@@ -14,7 +14,13 @@ Simply run `./install.sh`, this will copy over the plugin script into your `xbar
 
 Then simply refresh the plugin.
 
+The full plugin installation docs are available in the [Swiftbar Docs](https://github.com/swiftbar/SwiftBar).
+
+If you run into trouble installing, just ping me on [Discord](https://discordapp.com/users/511267995214151721).
+
 ## Roadmap
 
 - Allow to use Holodex API with your own API key
+- Allow more clear customization of organization to fetch from
+- Integrate golive notifications?
 
