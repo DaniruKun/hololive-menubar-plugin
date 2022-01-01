@@ -82,6 +82,10 @@ class Video
     seconds_diff -= hours * 3600
     minutes = seconds_diff / 60
 
+    if minutes.zero?
+      return "[now]"
+    end
+
     if hours.positive?
       "[#{hours}h #{minutes}m]"
     else
