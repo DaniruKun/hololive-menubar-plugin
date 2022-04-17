@@ -188,6 +188,9 @@ class Hololive
       'UCYz_5n-uDuChHtLo7My1HnQ' => '🧟‍♀️',
       'UC727SQYUvx5pDDGQpTICNWg' => '🍂',
       'UChgTyjG-pdNvxxhdsXfHQ5Q' => '🦚',
+      'UCTvHWSfBZgtxE4sILOaurIQ' => '📜',
+      'UCZLZ8Jjx_RN2CXloOmgTHVg' => '🔨',
+      'UCjLEmnpCNeisMxy134KPwWw' => '☔',
       # HololiveEN
       'UCL_qhgtOy0dy1Agp8vkySQg' => '💀',
       'UCHsx4Hqa-1ORjQTh9TYDhww' => '🐔',
